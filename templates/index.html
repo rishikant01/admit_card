@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admit Card Download</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #2c3e50, #3498db);
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+            width: 350px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            color: #ecf0f1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #7f8c8d;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        input:focus {
+            border-color: #2980b9;
+            outline: none;
+            box-shadow: 0px 0px 8px rgba(41, 128, 185, 0.8);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #e74c3c;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #c0392b;
+        }
+
+        #admitCardLink {
+            margin-top: 20px;
+            display: none;
+            font-size: 1.2em;
+        }
+
+        #admitCardLink a {
+            color: #e67e22;
+            text-decoration: none;
+        }
+
+        #admitCardLink a:hover {
+            text-decoration: underline;
+            color: #d35400;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Admit Card Portal</h1>
+        <form id="admitCardForm">
+            <label for="mobileNumber">Mobile Number:</label>
+            <input type="text" id="mobileNumber" placeholder="Enter Mobile Number" required />
+
+            <label for="rollNumber">Roll Number:</label>
+            <input type="text" id="rollNumber" placeholder="Enter Roll Number" required />
+
+            <button type="submit">Get Admit Card</button>
+        </form>
+
+        <div id="admitCardLink">
+            <p>Your admit card is ready. <a href="#" target="_blank" id="downloadLink">Click here to download</a>.</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('admitCardForm');
+        const admitCardLinkDiv = document.getElementById('admitCardLink');
+        const downloadLink = document.getElementById('downloadLink');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const mobileNumber = document.getElementById('mobileNumber').value;
+            const rollNumber = document.getElementById('rollNumber').value;
+
+            try {
+                const response = await fetch('/get-admit-card-link', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mobileNumber, rollNumber })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.admitCardLink) {
+                        admitCardLinkDiv.style.display = 'block';
+                        downloadLink.href = data.admitCardLink;
+                    } else {
+                        alert('Admit Card not found for the provided credentials.');
+                        admitCardLinkDiv.style.display = 'none';
+                    }
+                } else {
+                    alert('Invalid credentials. Please try again.');
+                    admitCardLinkDiv.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request.');
+                admitCardLinkDiv.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
