@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, abort,jsonify
+from flask import Flask, render_template, request, redirect, abort, jsonify
 import json
+import os
 
 app = Flask(__name__)
 
@@ -27,4 +28,5 @@ def get_admit_card_link():
         return jsonify({"error": "Invalid credentials or Admit Card not found."}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = os.environ.get('PORT', 5000)  # Get the port from the environment variable or default to 5000
+    app.run(host='0.0.0.0', port=port)  # Bind to 0.0.0.0 and the port specified by Render
